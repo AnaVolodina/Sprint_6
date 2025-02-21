@@ -1,48 +1,42 @@
 import allure
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from data import URLs
+from selenium.webdriver.remote.webdriver import WebDriver
 from locators.logo_locators import Logo_locators
 from locators.order_locators import Order_locators
+from pages.base_page import BasePage
 
 
-class LogoPage:
-    def __init__(self, driver):
-        self.driver = driver
+class LogoPage(BasePage):
+    def __init__(self, driver: WebDriver, base_url: str):
+        super().__init__(driver, base_url) # Передаем base_url в BasePage
+        self.base_url = base_url
 
-    @allure.step("Открытие браузера")
-    def open_browser(self, driver):
-        driver.get(URLs.MAIN_PAGE_URL)
-        return self
+    @allure.step("Открытие страницы")
+    def open_page(self):  # Реализация абстрактного метода
+        self.driver.get(self.base_url)
 
     @allure.step("Нажатие на кнопку Заказать в шапке лендинга")
-    def click_order_button(self, driver):
-        driver.find_element(*Order_locators.ORDER_BUTTON_UP).click()
-        return self
+    def click_order_button(self):
+        self.find_element(Order_locators.ORDER_BUTTON_UP).click()
 
     @allure.step("Нажатие на логотип Самоката")
-    def click_scooter_logo(self, driver):
-        driver.find_element(*Logo_locators.SCOOTER_BUTTON).click()
-        return self
+    def click_scooter_logo(self):
+        self.find_element(Logo_locators.SCOOTER_BUTTON).click()
 
     @allure.step("Нажатие на логотип Яндекса")
-    def click_yandex_logo(self, driver):
-        driver.find_element(*Logo_locators.YANDEX_BUTTON).click()
-        return self
+    def click_yandex_logo(self):
+        self.find_element(Logo_locators.YANDEX_BUTTON).click()
 
-    @allure.step("Открытие главной страницы Дзена в новом окне")
-    def switching_to_the_new_window(self, driver):
-        driver.switch_to.window(driver.window_handles[1])
-        return self
+    @allure.step("Переключение на новое окно")
+    def switch_to_the_new_window(self):
+        self.driver.switch_to.window(self.driver.window_handles[1])
+
 
     @allure.step("Проверка URL страницы Дзена")
-    def check_dzen_url(self, driver):
-        WebDriverWait(driver, 10).until(
-            EC.url_to_be(URLs.DZEN_URL))
-        assert driver.current_url == URLs.DZEN_URL
-        return self
+    def check_dzen_url(self):
+        self.find_element(Logo_locators.DZEN_LOGO)
+        return self.driver.current_url
+
 
     @allure.step("Проверка URL страницы после нажатия на Самокат")
-    def check_main_page_url(self, driver):
-        assert driver.current_url == URLs.MAIN_PAGE_URL
-        return self
+    def check_main_page_url(self):
+        return self.driver.current_url

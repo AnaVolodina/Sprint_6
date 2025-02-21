@@ -1,44 +1,42 @@
 import allure
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from data import URLs
+from selenium.webdriver.remote.webdriver import WebDriver
 from locators.FAQ_locators import FAQ_Locators
+from pages.base_page import BasePage
 
 
-class QuestionsPage:
-    def __init__(self, driver):
-        self.driver = driver
+class QuestionsPage(BasePage):
+    def __init__(self, driver: WebDriver, base_url: str):
+        super().__init__(driver, base_url) # Передаем base_url в BasePage
+        self.base_url = base_url
 
-    @allure.step("Открытие браузера")
-    def open_browser(self, driver):
-        driver.get(URLs.MAIN_PAGE_URL)
-        return self
+    @allure.step("Открытие страницы")
+    def open_page(self):  # Реализация абстрактного метода
+       self.driver.get(self.base_url)
 
     @allure.step("Закрытие всплывающего окна cookie (если есть)")
-    def close_cookie_popup (self, driver):
-        cookie_button = WebDriverWait(driver, 5).until(
-            EC.element_to_be_clickable(FAQ_Locators.COOKIE_BUTTON_LOCATOR)
-        )
-        cookie_button.click()
-        return self
+    def close_cookie_popup(self):
+        cookie_button = self.find_element(FAQ_Locators.COOKIE_BUTTON_LOCATOR)
+        if cookie_button:
+            cookie_button.click()
 
     @allure.step("Скролл к вопросам")
-    def scroll_to_faq(self, driver):
-        element = driver.find_element(By.CLASS_NAME, "accordion")
-        driver.execute_script("arguments[0].scrollIntoView(true);", element)
-        return self
+    def scroll_to_faq(self):
+        element = self.find_element(FAQ_Locators.ACCORDION)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
     @allure.step("Получение текста вопроса")
-    def get_question(self, driver, index):
+    def get_question_text(self, index):
         question_locator = (FAQ_Locators.QUESTION[0], FAQ_Locators.QUESTION[1].format(index))
-        question = WebDriverWait(driver, 3).until(EC.element_to_be_clickable(question_locator))
-        question.click()
-        return question.text
+        question = self.find_element(question_locator)
+        if question:
+            question.click()
+            return question.text
+        else:
+            return None
 
     @allure.step("Получение текста ответа")
-    def get_answer(self, driver, index):
-        answer_locator = (FAQ_Locators.ANSWER[0], FAQ_Locators.ANSWER[1].format(index))
-        answer = driver.find_element(*answer_locator)
+    def get_answer_text(self, index):
+        locator = (FAQ_Locators.ANSWER[0], FAQ_Locators.ANSWER[1].format(index))
+        answer = self.find_element(locator)
         return answer.text
 
