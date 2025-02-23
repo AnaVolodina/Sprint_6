@@ -23,6 +23,5 @@ class TestMainPage:
         questions_page.close_cookie_popup()
         questions_page.scroll_to_faq()
         questions_page.click_the_question(question_locator)
-        answer_text = questions_page.get_the_answer_text(answer_locator)
-        # Проверяем, что текст ответа соответствует ожидаемому
-        assert answer_text in expected_texts.values()
+        answer = questions_page.get_the_answer_text(answer_locator)
+        assert answer == expected_text
