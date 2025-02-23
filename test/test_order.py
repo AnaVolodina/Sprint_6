@@ -6,7 +6,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))) 
 from data import OrderData
 
 
-
 class TestOrderPage:
     @allure.title('Проверка позитивного сценария заказа самоката')
     @allure.description('Проверяем весь флоу позитивного сценария с двумя наборами данных')
@@ -19,7 +18,7 @@ class TestOrderPage:
         getattr(order_page, button_method)()
         # Заполнение полей для заказа самоката через параметр order_data
         order_page.user_order(**order_data)
-        # Проверка окна подтверждения по тексту "Заказ оформлен"
+        # Проверка окна подтверждения заказа
         order_page.confirmation_window()
-        message_text = order_page.confirmation_window()
-        assert 'Заказ оформлен' in message_text
+        message = order_page.confirmation_window()
+        assert 'Заказ оформлен' in message

@@ -16,7 +16,7 @@ class Order_locators:
     NEXT_BUTTON = [By.XPATH, ".//button[text()='Далее']"]
 
     # Форма Про аренду
-    DELIVERY_DATE = [By.XPATH, "//input[@placeholder='* Когда привезти самокат']"]
+    DELIVERY_DATE = (By.XPATH, "//input[@placeholder='* Когда привезти самокат']")
     RENT_TIME = [By.XPATH, '//div[text()="* Срок аренды"]']
     SELECT_RENT_TIME = [By.XPATH, '//div[text()="{}"]']
     BLACK_COLOR_CHECKBOX = [By.XPATH, '//label[@for="black"]']

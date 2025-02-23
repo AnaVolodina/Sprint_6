@@ -9,8 +9,6 @@ from pages.page_logo import LogoPage
 from pages.page_order import OrderPage
 
 
-BASE_URL = "https://qa-scooter.praktikum-services.ru/"
-
 @pytest.fixture(scope="function")
 def driver():
     driver = webdriver.Firefox()
@@ -19,15 +17,15 @@ def driver():
 
 @pytest.fixture()
 def questions_page(driver):
-    questions_page = QuestionsPage(driver, BASE_URL)
+    questions_page = QuestionsPage(driver, "https://qa-scooter.praktikum-services.ru/")
     return questions_page
 
 @pytest.fixture()
 def logo_page(driver):
-    logo_page = LogoPage(driver, BASE_URL)
+    logo_page = LogoPage(driver, "https://qa-scooter.praktikum-services.ru/")
     return logo_page
 
 @pytest.fixture()
 def order_page(driver):
-    order_page = OrderPage (driver, BASE_URL)
+    order_page = OrderPage (driver, "https://qa-scooter.praktikum-services.ru/")
     return order_page

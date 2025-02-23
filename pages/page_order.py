@@ -4,7 +4,8 @@ from locators.order_locators import Order_locators
 from selenium.webdriver.common.keys import Keys
 from locators.FAQ_locators import FAQ_Locators
 from pages.base_page import BasePage
-
+from data import URLs
+from selenium.webdriver.common.keys import Keys
 
 class OrderPage(BasePage):
     def __init__(self, driver: WebDriver, base_url: str):
@@ -13,82 +14,85 @@ class OrderPage(BasePage):
 
     @allure.step("Открытие страницы")
     def open_page(self):  # Реализация абстрактного метода
-        self.driver.get(self.base_url)
+        super().open_page()
 
     @allure.step("Закрытие всплывающего окна cookie (если есть)")
     def close_cookie_popup(self):
         cookie_button = self.find_element(FAQ_Locators.COOKIE_BUTTON_LOCATOR)
-        if cookie_button:
-            cookie_button.click()
+        self.click_element(cookie_button)
 
     @allure.step("Нажатие на кнопку Заказать в шапке лендинга")
     def click_up_order_button(self):
-        self.find_element(Order_locators.ORDER_BUTTON_UP).click()
+        order_button = self.find_element(Order_locators.ORDER_BUTTON_UP)
+        self.click_element(order_button)
 
     @allure.step("Нажатие на кнопку Заказать в нижней части страницы")
     def click_down_order_button(self):
-        element = self.find_element(Order_locators.ORDER_BUTTON_DOWN)
-        self.execute_script("arguments[0].scrollIntoView();", element)
-        element.click()
+        self.scroll_to_element(Order_locators.ORDER_BUTTON_DOWN)
+        self.click_element(Order_locators.ORDER_BUTTON_DOWN)
 
     @allure.step("Заполнение поля Имя")
-    def fill_name_field(self, name):
-        self.find_element(Order_locators.NAME).send_keys(name)
+    def fill_name_field(self, text):
+        self.send_keys_to_element(Order_locators.NAME, text)
 
     @allure.step("Заполнение поля Фамилия")
-    def fill_surname_field(self, surname):
-        self.find_element(Order_locators.SURNAME).send_keys(surname)
+    def fill_surname_field(self, text):
+        self.send_keys_to_element(Order_locators.SURNAME, text)
 
     @allure.step("Заполнение поля Адрес")
-    def fill_address_field(self, address):
-        self.find_element(Order_locators.ADDRESS).send_keys(address)
+    def fill_address_field(self, text):
+        self.send_keys_to_element(Order_locators.ADDRESS, text)
 
     @allure.step("Заполнение поля Станция метро")
-    def check_metro_station(self, metro):
-        self.find_element(Order_locators.METRO).send_keys(metro)
-        self.find_element(Order_locators.LIST_OF_STATIONS).click()
+    def check_metro_station(self, text):
+        self.send_keys_to_element(Order_locators.METRO, text)
+        stations_list = self.find_element(Order_locators.LIST_OF_STATIONS)
+        self.click_element(stations_list)
 
     @allure.step("Заполнение поля Телефон")
-    def fill_number_field(self, number):
-        self.find_element(Order_locators.NUMBER).send_keys(number)
+    def fill_number_field(self, text):
+        self.send_keys_to_element(Order_locators.NUMBER, text)
 
     @allure.step("Нажатие на кнопку Далее")
     def click_next_button(self):
-        self.find_element(Order_locators.NEXT_BUTTON).click()
+        next_button = self.find_element(Order_locators.NEXT_BUTTON)
+        self.click_element(next_button)
 
     @allure.step("Выбор даты доставки")
-    def fill_delivery_date_field(self, delivery_date):
-        self.find_element(Order_locators.DELIVERY_DATE).send_keys(delivery_date, Keys.ENTER)
+    def fill_delivery_date_field(self, text):
+        self.fill_date_field(Order_locators.DELIVERY_DATE, text)
+
 
     @allure.step("Выбор срока аренды")
-    def rental_time(self, day):
-        self.find_element(Order_locators.RENT_TIME).click()
-        select_rent_time_locator = (Order_locators.SELECT_RENT_TIME[0], Order_locators.SELECT_RENT_TIME[1].format(day))
-        self.find_element(select_rent_time_locator).click()
+    def rental_time(self, text):
+        self.rent_time(Order_locators.RENT_TIME, text)
+
 
     @allure.step("Выбор цвета")
     def checkbox_color(self, color):
         if color == 'чёрный жемчуг':
-            self.find_element(Order_locators.BLACK_COLOR_CHECKBOX).click()
+            self.click_element(Order_locators.BLACK_COLOR_CHECKBOX)
         elif color == 'серая безысходность':
-            self.find_element(Order_locators.GREY_COLOR_CHECKBOX).click()
+            self.click_element(Order_locators.GREY_COLOR_CHECKBOX)
 
     @allure.step("Заполнение поля Комментарии к заказу")
-    def comment_for_courier(self, comment):
-        self.find_element(Order_locators.COMMENT).send_keys(comment)
+    def comment_for_courier(self, text):
+        self.send_keys_to_element(Order_locators.COMMENT, text)
 
     @allure.step("Нажатие на кнопку Заказать")
     def click_order_button(self):
-        self.find_element(Order_locators.ORDER_BUTTON).click()
+        order_button = self.find_element(Order_locators.ORDER_BUTTON)
+        self.click_element(order_button)
 
     @allure.step("Нажатие на кнопку 'Да' в окне подтверждения заказа")
     def click_confirmation_button(self):
-        self.find_element(Order_locators.YES_BUTTON).click()
+        confirmation_button = self.find_element(Order_locators.YES_BUTTON)
+        self.click_element(confirmation_button)
 
     @allure.step("Проверка текста в окне подтверждения заказа")
     def confirmation_window(self):
-        message = self.find_element(Order_locators.ORDER_COMPLETED)
-        return message.text
+        message = self.get_element_text(Order_locators.ORDER_COMPLETED)
+        return message
 
     @allure.step("Полный позитивный сценарий")
     def user_order(self,
